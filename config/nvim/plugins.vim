@@ -2,22 +2,15 @@ call plug#begin()
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-sleuth' " Auto tab parameters
-    " Plug 'voldikss/vim-floaterm'
     Plug 'tpope/vim-fugitive'
     Plug 'airblade/vim-gitgutter' " git diff markers
     Plug 'michaeljsmith/vim-indent-object'
     Plug 'junegunn/vim-easy-align'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
+    Plug 'itchyny/lightline.vim'
     Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-    " Plug 'rose-pine/neovim'
-    Plug 'phaazon/hop.nvim'
-    Plug 'preservim/tagbar'
+    Plug 'ThePrimeagen/harpoon'
 
-    " NerdTree
-    Plug 'preservim/nerdtree' |
-        \ Plug 'Xuyuanp/nerdtree-git-plugin' |
-        \ Plug 'ryanoasis/vim-devicons'
+    Plug 'jlanzarotta/bufexplorer'
 
     " Telescope
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -38,4 +31,5 @@ call plug#begin()
 
     " Copilot
     Plug 'github/copilot.vim'
+
 call plug#end()
