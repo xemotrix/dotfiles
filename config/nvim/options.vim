@@ -46,15 +46,12 @@ nnoremap <silent>N Nzz
 
 xnoremap <silent><leader>p "_dP
 
-vnoremap <C-s> :s/<C-r><C-w>//g<Left><Left>
+" vnoremap <C-s> :s/<C-r><C-w>//g<Left><Left>
+" vnoremap <C-s> :s/<C-r><C-w>/
+vnoremap <C-s> :s/
 nnoremap <C-s> :%s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
 
-" lolo is lolo lol
-" is lolo lol lolo
-" lolo is lolo lol
-" lolo is lolo lol
-
-" map <leader>tn :tabnew<cr>
+" map <leader>tn tabnew<cr>
 " map <leader>tm :tabmove 
 " map <leader>tc :tabclose<cr>
 " map <leader>to :tabonly<cr>
