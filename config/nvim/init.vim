@@ -6,6 +6,7 @@ luafile $HOME/.config/nvim/langs/go.lua
 luafile $HOME/.config/nvim/langs/rust.lua
 luafile $HOME/.config/nvim/langs/python.lua
 
+luafile $HOME/.config/nvim/plug-config/oil.lua
 luafile $HOME/.config/nvim/plug-config/cmp.lua
 luafile $HOME/.config/nvim/plug-config/harpoon.lua
 luafile $HOME/.config/nvim/plug-config/treesitter.lua

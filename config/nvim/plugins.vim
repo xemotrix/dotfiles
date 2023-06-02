@@ -10,6 +10,9 @@ call plug#begin()
     Plug 'catppuccin/vim', { 'as': 'catppuccin' }
     Plug 'ThePrimeagen/harpoon'
 
+    Plug 'stevearc/oil.nvim'
+    Plug 'nvim-tree/nvim-web-devicons'
+
     Plug 'jlanzarotta/bufexplorer'
 
     " Telescope
