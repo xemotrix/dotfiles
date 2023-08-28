@@ -48,8 +48,16 @@ xnoremap <silent><leader>p "_dP
 
 " vnoremap <C-s> :s/<C-r><C-w>//g<Left><Left>
 " vnoremap <C-s> :s/<C-r><C-w>/
+
 vnoremap <C-s> :s/
-nnoremap <C-s> :%s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
+noremap <C-s> :%s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
+
+command W w
+command Q q
+command Wq wq
+command WQ wq
+
+" set guicursor=n-v-c-i:block
 
 " map <leader>tn tabnew<cr>
 " map <leader>tm :tabmove 

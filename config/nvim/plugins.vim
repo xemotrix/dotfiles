@@ -6,9 +6,11 @@ call plug#begin()
     Plug 'airblade/vim-gitgutter' " git diff markers
     Plug 'michaeljsmith/vim-indent-object'
     Plug 'junegunn/vim-easy-align'
-    Plug 'itchyny/lightline.vim'
-    Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+    " Plug 'itchyny/lightline.vim'
     Plug 'ThePrimeagen/harpoon'
+
+    Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+    Plug 'rebelot/kanagawa.nvim'
 
     Plug 'stevearc/oil.nvim'
     Plug 'nvim-tree/nvim-web-devicons'
@@ -23,6 +25,8 @@ call plug#begin()
     " LSP
     Plug 'neovim/nvim-lspconfig'
     Plug 'fatih/vim-go' " for syntax highlighting and auto fmt
+
+    Plug 'elixir-editors/vim-elixir'
 
     " CMP
     Plug 'hrsh7th/nvim-cmp'

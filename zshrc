@@ -35,3 +35,9 @@ export GONOPROXY=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xy
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 eval $(thefuck --alias)
+
+# opam configuration
+[[ ! -r /Users/chema.rodriguez/.opam/opam-init/init.zsh ]] || source /Users/chema.rodriguez/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+eval $(opam env)
+
