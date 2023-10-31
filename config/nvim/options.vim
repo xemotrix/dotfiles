@@ -1,4 +1,4 @@
-set updatetime=50
+set updatetime=10
 
 syntax on
 filetype plugin on  " Will allow scripts to run for specific file types
@@ -49,8 +49,8 @@ xnoremap <silent><leader>p "_dP
 " vnoremap <C-s> :s/<C-r><C-w>//g<Left><Left>
 " vnoremap <C-s> :s/<C-r><C-w>/
 
-vnoremap <C-s> :s/
-noremap <C-s> :%s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
+" vnoremap <C-s> :s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
+nnoremap <C-s> :%s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
 
 command W w
 command Q q
