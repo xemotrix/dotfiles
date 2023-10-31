@@ -36,11 +36,11 @@ vim.cmd("colorscheme kanagawa")
 
 vim.cmd("hi StatusLine ctermbg=none guibg=none ")
 
-
 vim.cmd("hi DiagnosticError guifg=#e46876")
 vim.cmd("hi DiagnosticWarn guifg=#ffa066")
 
-local _border = "single"
+-- local _border = "single"
+local _border = "double"
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
   vim.lsp.handlers.hover, {
     border = _border

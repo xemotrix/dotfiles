@@ -3,7 +3,7 @@ call plug#begin()
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-sleuth' " Auto tab parameters
     Plug 'tpope/vim-fugitive'
-    Plug 'airblade/vim-gitgutter' " git diff markers
+    " Plug 'airblade/vim-gitgutter' " git diff markers
     Plug 'michaeljsmith/vim-indent-object'
     Plug 'junegunn/vim-easy-align'
     " Plug 'itchyny/lightline.vim'
