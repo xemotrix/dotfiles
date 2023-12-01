@@ -25,7 +25,7 @@ alias gtree='git log --oneline --all --graph --decorate'
 export PYTHONPATH='$HOME/Documents/scripts/my_modules'
 export PATH="$PATH:/Users/chema.rodriguez/.local/bin"
 export PATH="$PATH:/Users/chema.rodriguez/go/bin"
-
+export PATH="$PATH:/Users/chema.rodriguez/google-cloud-sdk/bin"
 export PATH="$PATH:/Users/chema.rodriguez/rust-analyzer"
 
 export GONOSUMDB=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
@@ -41,3 +41,9 @@ eval $(thefuck --alias)
 
 eval $(opam env)
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/chema.rodriguez/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/chema.rodriguez/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/chema.rodriguez/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/chema.rodriguez/google-cloud-sdk/completion.zsh.inc'; fi
