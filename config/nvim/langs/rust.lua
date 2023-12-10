@@ -30,3 +30,4 @@ require('lspconfig')['rust_analyzer'].setup{
     },
 }
 
+vim.api.nvim_command("au BufWritePost *.rs lua vim.lsp.buf.format()")
