@@ -9,7 +9,7 @@ call plug#begin()
     " Plug 'itchyny/lightline.vim'
     Plug 'ThePrimeagen/harpoon'
 
-    Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+    Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
     Plug 'rebelot/kanagawa.nvim'
 
     Plug 'stevearc/oil.nvim'

@@ -4,7 +4,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+# source ~/powerlevel10k/powerlevel10k.zsh-theme
 # source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -23,10 +23,10 @@ alias nv='nvim .'
 alias gtree='git log --oneline --all --graph --decorate'
 
 export PYTHONPATH='$HOME/Documents/scripts/my_modules'
-export PATH="$PATH:/Users/chema.rodriguez/.local/bin"
-export PATH="$PATH:/Users/chema.rodriguez/go/bin"
-export PATH="$PATH:/Users/chema.rodriguez/google-cloud-sdk/bin"
-export PATH="$PATH:/Users/chema.rodriguez/rust-analyzer"
+export PATH="$PATH:/Users/chema/.local/bin"
+export PATH="$PATH:/Users/chema/go/bin"
+export PATH="$PATH:/Users/chema/google-cloud-sdk/bin"
+export PATH="$PATH:/Users/chema/rust-analyzer"
 
 export GONOSUMDB=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
 export GONOPROXY=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
@@ -37,13 +37,13 @@ export GONOPROXY=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xy
 eval $(thefuck --alias)
 
 # opam configuration
-[[ ! -r /Users/chema.rodriguez/.opam/opam-init/init.zsh ]] || source /Users/chema.rodriguez/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+[[ ! -r /Users/chema/.opam/opam-init/init.zsh ]] || source /Users/chema/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 
 eval $(opam env)
 
-
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/chema.rodriguez/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/chema.rodriguez/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/chema/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/chema/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/chema.rodriguez/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/chema.rodriguez/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/Users/chema/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/chema/google-cloud-sdk/completion.zsh.inc'; fi
+source ~/powerlevel10k/powerlevel10k.zsh-theme
