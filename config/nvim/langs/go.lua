@@ -16,8 +16,8 @@ require'lspconfig'.gopls.setup{
 }
 
 vim.cmd([[
-nnoremap <leader>tc <cmd>GoCoverageToggle<CR>
-nnoremap <leader>tt <cmd>GoCoverage<CR>
+" nnoremap <leader>tc <cmd>GoCoverageToggle<CR>
+nnoremap <leader>tc <cmd>GoCoverage<CR>
 
 let g:go_gopls_enabled = 0
 let g:go_def_mapping_enabled = 0
