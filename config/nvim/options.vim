@@ -1,12 +1,12 @@
 set updatetime=10
 
 syntax on
-filetype plugin on  " Will allow scripts to run for specific file types
+filetype plugin on
 filetype plugin indent on
 
 set clipboard=unnamed
 set number relativenumber
-set exrc " To be able to override configurations for each project with a local .nvimrc
+set exrc
 
 set wrap
 set relativenumber
@@ -46,25 +46,7 @@ nnoremap <silent>N Nzz
 
 xnoremap <silent><leader>p "_dP
 
-" vnoremap <C-s> :s/<C-r><C-w>//g<Left><Left>
-" vnoremap <C-s> :s/<C-r><C-w>/
-
-" vnoremap <C-s> :s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
-nnoremap <C-s> :%s/<C-r><C-w>/<C-r><C-w>/g<Left><Left>
-
 command W w
 command Q q
 command Wq wq
 command WQ wq
-
-" set guicursor=n-v-c-i:block
-
-" map <leader>tn tabnew<cr>
-" map <leader>tm :tabmove 
-" map <leader>tc :tabclose<cr>
-" map <leader>to :tabonly<cr>
-" nnoremap <silent><leader>h <C-w>h
-" nnoremap <silent><leader>j <C-w>j
-" nnoremap <silent><leader>k <C-w>k
-" nnoremap <silent><leader>l <C-w>l
-

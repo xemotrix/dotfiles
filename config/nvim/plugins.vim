@@ -3,13 +3,14 @@ call plug#begin()
 
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
-    Plug 'tpope/vim-sleuth' " Auto tab parameters
+    Plug 'tpope/vim-sleuth'
     Plug 'tpope/vim-fugitive'
     Plug 'lewis6991/gitsigns.nvim'
     Plug 'michaeljsmith/vim-indent-object'
     Plug 'junegunn/vim-easy-align'
     Plug 'ThePrimeagen/harpoon'
     Plug 'folke/trouble.nvim'
+    Plug 'mbbill/undotree'
 
     Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
     Plug 'rebelot/kanagawa.nvim'
@@ -24,7 +25,7 @@ call plug#begin()
 
     " LSP
     Plug 'neovim/nvim-lspconfig'
-    Plug 'fatih/vim-go' " for syntax highlighting and auto fmt
+    Plug 'fatih/vim-go'
     Plug 'elixir-editors/vim-elixir'
 
     " CMP
@@ -39,4 +40,3 @@ call plug#begin()
     Plug 'github/copilot.vim'
 
 call plug#end()
-

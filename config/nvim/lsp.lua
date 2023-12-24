@@ -25,3 +25,9 @@ vim.diagnostic.config({
         prefix = '',
     },
 })
+
+require("go")
+require("rust")
+require("elixir")
+require("ocaml")
+require("python")
