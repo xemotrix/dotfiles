@@ -27,6 +27,7 @@ call plug#begin()
     Plug 'neovim/nvim-lspconfig'
     Plug 'fatih/vim-go'
     Plug 'elixir-editors/vim-elixir'
+    Plug 'rhysd/vim-llvm'
 
     " CMP
     Plug 'hrsh7th/nvim-cmp'

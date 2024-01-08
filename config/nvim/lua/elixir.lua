@@ -1,7 +1,7 @@
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 require'lspconfig'.elixirls.setup{
-    cmd = { "/Users/chema.rodriguez/elixir-ls/language_server.sh" };
+    cmd = { "/Users/chema/elixir-ls/language_server.sh" };
     capabilities = capabilities,
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})

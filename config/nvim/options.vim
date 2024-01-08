@@ -8,7 +8,7 @@ set clipboard=unnamed
 set number relativenumber
 set exrc
 
-set wrap
+set nowrap
 set relativenumber
 set mouse=a
 set scrolloff=8
