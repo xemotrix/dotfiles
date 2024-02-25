@@ -19,7 +19,7 @@ vim.diagnostic.config({
     underline = true,
     severity_sort = false,
     float = {
-        -- border = 'rounded',
+        border = 'rounded',
         source = 'always',
         header = '',
         prefix = '',
@@ -31,3 +31,4 @@ require("rust")
 require("elixir")
 require("ocaml")
 require("python")
+require("c")

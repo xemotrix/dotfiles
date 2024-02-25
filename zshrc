@@ -3,10 +3,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
-# source ~/powerlevel10k/powerlevel10k.zsh-theme
-# source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
-
 ZSH_THEME="powerlevel10k/powerlevel10k"
 # source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -30,7 +26,7 @@ export PATH="$PATH:/Users/chema/.local/bin"
 export PATH="$PATH:/Users/chema/go/bin"
 export PATH="$PATH:/Users/chema/google-cloud-sdk/bin"
 export PATH="$PATH:/Users/chema/rust-analyzer"
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm@13/bin:$PATH"
 
 export GONOSUMDB=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
 export GONOPROXY=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
@@ -54,6 +50,8 @@ if [ -f '/Users/chema/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/che
 # . $(brew --prefix asdf)/libexec/asdf.sh
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
-# export LDFLAGS="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
-# export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
-# export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/homebrew/lib/pkgconfig/"
+
+export LDFLAGS="-L/opt/homebrew/opt/llvm@13/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm@13/include"
+

@@ -4,19 +4,17 @@ local cmp = require'cmp'
 cmp.setup({
     snippet = {
         expand = function(args)
-            require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+            require('luasnip').lsp_expand(args.body)
         end,
     },
     window = {
       -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
         ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i','c'}),
         ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i','c'}),
-        -- ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), {'i','c'}),
         ['<C-c>'] = cmp.mapping(cmp.mapping.complete(), {'i','c'}),
-        --['<C-e>'] = cmp.mapping.abort(),
         ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     }),
     sources = cmp.config.sources({

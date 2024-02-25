@@ -12,3 +12,5 @@ nnoremap <leader>gs <cmd>Telescope git_status<cr>
 nnoremap <leader>gb <cmd>Telescope git_branches<cr>
 nnoremap <leader>gc <cmd>Telescope git_commits<cr>
 
+" vim.keymap.set("n", "<leader>fr", function() require('telescope.builtin').lsp_references() end, { noremap = true, silent = true })
+nnoremap <leader>fr <cmd>Telescope lsp_references<cr>
