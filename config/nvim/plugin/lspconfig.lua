@@ -1,19 +1,28 @@
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
-	callback = function(event)
-		local map = function(keys, func, desc)
-			vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
-		end
-		map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-		map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-		map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-		map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-		map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-		map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
-		map("<leader>r", vim.lsp.buf.rename, "[R]e[n]ame")
-		map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-		map("K", vim.lsp.buf.hover, "Hover Documentation")
-		map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+	callback = function()
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
+		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = 0 })
+		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
+		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = 0 })
+		vim.keymap.set("n", "<leader>dj", vim.diagnostic.goto_next, { buffer = 0 })
+		vim.keymap.set("n", "<leader>dk", vim.diagnostic.goto_prev, { buffer = 0 })
+		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
+		-- map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+		-- map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+		-- map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+		-- map("gt", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+		-- map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+		-- map("gr", vim.lsp.buf.lsp_references, "[G]oto [R]eferences")
+		-- map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+		-- map("gt", vim.lsp.buf.lsp_type_definitions, "Type [D]efinition")
+		-- map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+		-- map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+		-- map("<leader>r", vim.lsp.buf.rename, "[R]e[n]ame")
+		-- map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+		-- map("K", vim.lsp.buf.hover, "Hover Documentation")
+		-- map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 	end,
 })
 
@@ -58,24 +67,29 @@ capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp"
 
 local servers = {
 	-- clangd = {},
-	gopls = {},
-	hls = {},
-	ocamllsp = {
-		on_attach = function(client, bufnr)
-			-- code lens
-			if client.resolved_capabilities.code_lens then
-				local codelens = vim.api.nvim_create_augroup("LSPCodeLens", { clear = true })
-				vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "CursorHold" }, {
-					group = codelens,
-					callback = function()
-						vim.lsp.codelens.refresh()
-					end,
-					buffer = bufnr,
-				})
-			end
+	gopls = {
+		on_attach = function()
+			vim.keymap.set("n", "<leader>tc", "<cmd>GoCoverage<CR>")
 		end,
-		-- require("virtualtypes").on_attach,
 	},
+	elixirls = {},
+	-- hls = {},
+	-- ocamllsp = {
+	-- 	on_attach = function(client, bufnr)
+	-- 		-- code lens
+	-- 		if client.resolved_capabilities.code_lens then
+	-- 			local codelens = vim.api.nvim_create_augroup("LSPCodeLens", { clear = true })
+	-- 			vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "CursorHold" }, {
+	-- 				group = codelens,
+	-- 				callback = function()
+	-- 					vim.lsp.codelens.refresh()
+	-- 				end,
+	-- 				buffer = bufnr,
+	-- 			})
+	-- 		end
+	-- 	end,
+	-- 	-- require("virtualtypes").on_attach,
+	-- },
 	-- pyright = {},
 	-- rust_analyzer = {},
 	-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
