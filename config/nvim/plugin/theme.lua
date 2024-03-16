@@ -29,12 +29,18 @@ require("kanagawa").setup({
 		}
 	end,
 })
-
-vim.cmd.colorscheme("kanagawa")
+vim.cmd.colorscheme("kanagawa-dragon")
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#e46876" })
+-- vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#ffa066" })
 vim.cmd("highlight Normal guibg=none")
 vim.cmd("hi StatusLine ctermbg=none guibg=none ")
 vim.cmd("hi DiagnosticError guifg=#e46876")
 vim.cmd("hi DiagnosticWarn guifg=#ffa066")
+
+vim.api.nvim_set_hl(0, "LspCodeLens", { fg = "#6A9589", bg = "#2B3328" })
+vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#6A9589", bg = "#2B3328" })
 
 local border = "double"
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
@@ -47,3 +53,4 @@ vim.diagnostic.config({
 	float = { border = border },
 })
 vim.cmd("hi FloatBorder cterm=NONE ctermbg=NONE guibg=NONE")
+-- vim.cmd("hi NormalFloat cterm=NONE ctermbg=NONE guibg=NONE")

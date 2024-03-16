@@ -5,24 +5,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = 0 })
 		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
+		vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
 		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = 0 })
 		vim.keymap.set("n", "<leader>dj", vim.diagnostic.goto_next, { buffer = 0 })
 		vim.keymap.set("n", "<leader>dk", vim.diagnostic.goto_prev, { buffer = 0 })
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
-		-- map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-		-- map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-		-- map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-		-- map("gt", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-		-- map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-		-- map("gr", vim.lsp.buf.lsp_references, "[G]oto [R]eferences")
-		-- map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-		-- map("gt", vim.lsp.buf.lsp_type_definitions, "Type [D]efinition")
-		-- map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-		-- map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
-		-- map("<leader>r", vim.lsp.buf.rename, "[R]e[n]ame")
-		-- map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-		-- map("K", vim.lsp.buf.hover, "Hover Documentation")
-		-- map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+		vim.keymap.set("n", "<leader>li", function()
+			vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
+		end)
 	end,
 })
 
@@ -47,7 +37,7 @@ vim.diagnostic.config({
 	severity_sort = false,
 	float = {
 		border = "rounded",
-		source = "always",
+		source = true,
 		header = "",
 		prefix = "",
 	},
@@ -62,36 +52,69 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 		"additionalTextEdits",
 	},
 }
--- local capabilities = require("cmp_nvim_lsp").update_capabilities(c)
 capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-local servers = {
-	-- clangd = {},
-	gopls = {
-		on_attach = function()
-			vim.keymap.set("n", "<leader>tc", "<cmd>GoCoverage<CR>")
+local enable_codelens = true
+local function setup_code_lens()
+	vim.keymap.set("n", "<leader>lc", function()
+		enable_codelens = not enable_codelens
+		if enable_codelens then
+			vim.lsp.codelens.refresh({ bufnr = 0 })
+		else
+			vim.lsp.codelens.clear()
+		end
+	end)
+
+	vim.keymap.set("n", "<leader>lr", function()
+		vim.lsp.codelens.run()
+	end)
+	vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+		group = vim.api.nvim_create_augroup("lsp-codelens", { clear = true }),
+		callback = function()
+			if enable_codelens then
+				vim.lsp.codelens.refresh({ bufnr = 0 })
+			end
 		end,
+	})
+end
+
+local servers = {
+	gopls = {
+		on_attach = setup_code_lens,
+		settings = {
+			gopls = {
+				codelenses = {
+					generate = true,
+					gc_details = true,
+					test = true,
+					tidy = true,
+					upgrade_dependency = true,
+					run_govulncheck = true,
+				},
+				hints = {
+					parameterNames = true,
+					constantValues = true,
+					functionTypeParameters = true,
+					compositeLiteralTypes = true,
+					compositeLiteralFields = true,
+					assignVariableTypes = true,
+					rangeVariableTypes = true,
+				},
+			},
+		},
 	},
 	elixirls = {},
 	-- hls = {},
-	-- ocamllsp = {
-	-- 	on_attach = function(client, bufnr)
-	-- 		-- code lens
-	-- 		if client.resolved_capabilities.code_lens then
-	-- 			local codelens = vim.api.nvim_create_augroup("LSPCodeLens", { clear = true })
-	-- 			vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "CursorHold" }, {
-	-- 				group = codelens,
-	-- 				callback = function()
-	-- 					vim.lsp.codelens.refresh()
-	-- 				end,
-	-- 				buffer = bufnr,
-	-- 			})
-	-- 		end
-	-- 	end,
-	-- 	-- require("virtualtypes").on_attach,
-	-- },
+	ocamllsp = {
+		on_attach = function(_, _)
+			setup_code_lens()
+		end,
+		settings = {
+			codelens = { enable = true },
+		},
+	},
 	-- pyright = {},
-	-- rust_analyzer = {},
+	rust_analyzer = {},
 	-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
 	lua_ls = {
@@ -111,6 +134,9 @@ local servers = {
 				completion = {
 					callSnippet = "Replace",
 				},
+				hint = {
+					enable = true,
+				},
 			},
 		},
 	},
@@ -128,6 +154,9 @@ local ensure_installed = vim.tbl_keys(servers or {})
 vim.list_extend(ensure_installed, { "stylua" })
 require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 require("mason-lspconfig").setup({
+	opts = {
+		inlay_hints = { enabled = true },
+	},
 	handlers = {
 		function(server_name)
 			local server = servers[server_name] or {}
@@ -136,5 +165,3 @@ require("mason-lspconfig").setup({
 		end,
 	},
 })
-
--- require("lspconfig").ocamllsp.setup({ on_attach = require("virtualtypes").on_attach })

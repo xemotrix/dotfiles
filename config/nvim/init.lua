@@ -97,6 +97,7 @@ require("lazy").setup({
 	"tpope/vim-commentary",
 	"tpope/vim-sleuth",
 	"tpope/vim-surround",
+	"rcarriga/nvim-notify",
 	"fatih/vim-go",
 	"github/copilot.vim",
 	{
@@ -106,6 +107,7 @@ require("lazy").setup({
 			ensure_installed = "all",
 			sync_install = false,
 			auto_install = true,
+			ignore_install = { "norg" },
 			highlight = {
 				enable = true,
 				disable = { "go" },

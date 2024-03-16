@@ -4,6 +4,14 @@ require("telescope").setup({
 			require("telescope.themes").get_dropdown(),
 		},
 	},
+	defaults = {
+		layout_strategy = "vertical",
+		layout_config = {
+			height = 0.95,
+			width = 0.8,
+			-- 	-- other layout configuration here
+		},
+	},
 })
 
 -- Enable telescope extensions, if they are installed
@@ -29,3 +37,10 @@ vim.keymap.set("n", "<leader>F", function()
 		previewer = false,
 	}))
 end)
+
+-- vim.keymap.set("n", "<leader>ff", function()
+-- 	builtin.find_files(require("telescope.themes").get_ivy({
+
+-- 		-- previewer = false,
+-- 	}))
+-- end)
