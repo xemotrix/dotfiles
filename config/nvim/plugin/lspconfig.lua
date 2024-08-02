@@ -1,18 +1,54 @@
 vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
+	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 	callback = function()
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
+		vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", { buffer = 0 })
+		vim.keymap.set("n", "gp", "<cmd>Lspsaga peek_definition<CR>", { buffer = 0 })
+		vim.keymap.set("n", "gP", "<cmd>Lspsaga peek_type_definition<CR>", { buffer = 0 })
+
+		vim.keymap.set("n", "ge", "<cmd>Lspsaga outline<CR>", { buffer = 0 })
+		vim.keymap.set("n", "gho", "<cmd>Lspsaga outgoing_calls<CR>", { buffer = 0 })
+		vim.keymap.set("n", "ghi", "<cmd>Lspsaga incoming_calls<CR>", { buffer = 0 })
+		-- vim.keymap.set("n", "<leader>dj", "<cmd>Lspsaga diagnostic_jump_next<CR>", { buffer = 0 })
+		-- vim.keymap.set("n", "<leader>dk", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { buffer = 0 })
+		--
+		--
+		-- vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = 0 })
 		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
 		vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
 		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = 0 })
+
 		vim.keymap.set("n", "<leader>dj", vim.diagnostic.goto_next, { buffer = 0 })
 		vim.keymap.set("n", "<leader>dk", vim.diagnostic.goto_prev, { buffer = 0 })
+
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
 		vim.keymap.set("n", "<leader>li", function()
 			vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
 		end)
+	end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*.go",
+	callback = function()
+		local params = vim.lsp.util.make_range_params()
+		params.context = { only = { "source.organizeImports" } }
+		-- buf_request_sync defaults to a 1000ms timeout. Depending on your
+		-- machine and codebase, you may want longer. Add an additional
+		-- argument after params if you find that you have to write the file
+		-- twice for changes to be saved.
+		-- E.g., vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
+		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+		for cid, res in pairs(result or {}) do
+			for _, r in pairs(res.result or {}) do
+				if r.edit then
+					local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
+					vim.lsp.util.apply_workspace_edit(r.edit, enc)
+				end
+			end
+		end
+		vim.lsp.buf.format({ async = false })
 	end,
 })
 
@@ -54,14 +90,16 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 }
 capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-local enable_codelens = true
+local enabled_codelens = true
 local function setup_code_lens()
 	vim.keymap.set("n", "<leader>lc", function()
-		enable_codelens = not enable_codelens
-		if enable_codelens then
+		enabled_codelens = not enabled_codelens
+		if enabled_codelens then
 			vim.lsp.codelens.refresh({ bufnr = 0 })
+			vim.print("CodeLens enabled")
 		else
 			vim.lsp.codelens.clear()
+			vim.print("CodeLens disabled")
 		end
 	end)
 
@@ -71,7 +109,7 @@ local function setup_code_lens()
 	vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
 		group = vim.api.nvim_create_augroup("lsp-codelens", { clear = true }),
 		callback = function()
-			if enable_codelens then
+			if enabled_codelens then
 				vim.lsp.codelens.refresh({ bufnr = 0 })
 			end
 		end,
@@ -83,6 +121,11 @@ local servers = {
 		on_attach = setup_code_lens,
 		settings = {
 			gopls = {
+				analyses = {
+					unusedparams = true,
+				},
+				staticcheck = true,
+				gofumpt = true,
 				codelenses = {
 					generate = true,
 					gc_details = true,
@@ -103,18 +146,40 @@ local servers = {
 			},
 		},
 	},
-	elixirls = {},
-	-- hls = {},
-	ocamllsp = {
+	elixirls = {
 		on_attach = function(_, _)
 			setup_code_lens()
 		end,
 		settings = {
-			codelens = { enable = true },
+			dialyzerEnabled = true,
+			fetchDeps = true,
+			enableTestLenses = true,
+			suggestSpecs = true,
 		},
 	},
+	-- hls = {},
+	-- ocamllsp = {
+	-- 	on_attach = function(_, _)
+	-- 		setup_code_lens()
+	-- 	end,
+	-- 	settings = {
+	-- 		codelens = { enable = true },
+	-- 	},
+	-- },
 	-- pyright = {},
-	rust_analyzer = {},
+	rust_analyzer = {
+		-- on_attach = function(_, bufnr)
+		-- 	vim.lsp.inlay_hint.enable(bufnr, true)
+		-- end,
+		rust_analyzer = {
+			inlay_hints = {
+				enable = true,
+				showParameterNames = true,
+				parameterHintsPrefix = "<- ",
+				otherHintsPrefix = "=> ",
+			},
+		},
+	},
 	-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
 	lua_ls = {
@@ -140,6 +205,11 @@ local servers = {
 			},
 		},
 	},
+	clojure_lsp = {
+		on_attach = function(_, _)
+			setup_code_lens()
+		end,
+	},
 }
 
 -- Ensure the servers and tools above are installed
@@ -163,5 +233,15 @@ require("mason-lspconfig").setup({
 			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 			require("lspconfig")[server_name].setup(server)
 		end,
+	},
+})
+
+local lspconfig = require("lspconfig")
+lspconfig.ocamllsp.setup({
+	on_attach = function(_, _)
+		setup_code_lens()
+	end,
+	settings = {
+		codelens = { enable = true },
 	},
 })

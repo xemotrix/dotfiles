@@ -59,6 +59,21 @@ vim.keymap.set("n", "<Right>", "<C-w><C-l>", { desc = "Move focus to the right w
 vim.keymap.set("n", "<Down>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<Up>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+-- "macros"
+-- sort paragraph
+vim.keymap.set("n", "<leader>S", "vip:'<,'>sort<CR>", { desc = "Sort paragraph" })
+
+-- profiling
+vim.api.nvim_create_user_command("ProfileStart", function(_)
+	vim.cmd(":profile start profile.log")
+	vim.cmd(":profile func *")
+	vim.cmd(":profile file *")
+end, { nargs = "?" })
+
+vim.api.nvim_create_user_command("ProfileStop", function(_)
+	vim.cmd(":profile stop")
+end, { nargs = "?" })
+
 -- [[ Basic Autocommands ]]
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -66,6 +81,15 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank({ higroup = "Visual", timeout = 50 })
 	end,
 })
+
+-- vim.api.nvim_create_autocmd("Filetype", {
+-- 	pattern = { "oil:*" },
+-- 	callback = function()
+-- 		vim.schedule(function()
+-- 			vim.opt.cursorline = true
+-- 		end)
+-- 	end,
+-- })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -75,6 +99,8 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+local map = vim.keymap.set
+local fn = vim.fn
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
 	{
@@ -98,8 +124,46 @@ require("lazy").setup({
 	"tpope/vim-sleuth",
 	"tpope/vim-surround",
 	"rcarriga/nvim-notify",
-	"fatih/vim-go",
+	"kana/vim-textobj-user",
+	"neovimhaskell/nvim-hs.vim",
+	"isovector/cornelis",
+	{
+		"Julian/lean.nvim",
+		event = { "BufReadPre *.lean", "BufNewFile *.lean" },
+		dependencies = {
+			"neovim/nvim-lspconfig",
+			"nvim-lua/plenary.nvim",
+		},
+		opts = {
+			init_options = {
+				editDelay = 0,
+				hasWidgets = true,
+			},
+			mappings = true,
+
+			infoview = {
+				autoopen = true,
+				horizontal_position = "bottom",
+				separate_tab = false,
+				indicators = "auto",
+			},
+			progress_bars = {
+				enable = true,
+				character = "│",
+				priority = 10,
+			},
+		},
+	},
+	-- "fatih/vim-go",
 	"github/copilot.vim",
+	-- "supermaven-inc/supermaven-nvim",
+	{
+		"nvimdev/lspsaga.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-tree/nvim-web-devicons",
+		},
+	},
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
@@ -154,6 +218,19 @@ require("lazy").setup({
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 		},
 	},
+	-- {
+	-- 	"Olical/conjure",
+	-- 	ft = { "clojure" },
+	-- 	init = function()
+	-- 		-- vim.g["conjure#mapping#enable_ft_mappings"] = false
+	-- 		-- vim.g["conjure#mapping#enable_defaults"] = false
+	-- 		vim.g["conjure#log#wrap"] = true
+	-- 		vim.g["conjure#mapping#prefix"] = ","
+	-- 		vim.g["conjure#highlight#enabled"] = true
+	-- 		vim.g["conjure#log#hud#enabled"] = false
+	-- 		-- vim.keymap.set("n", "<leader>gg", ":Git <CR>")
+	-- 	end,
+	-- },
 	{ -- Autoformat
 		"stevearc/conform.nvim",
 		opts = {
