@@ -82,15 +82,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
--- vim.api.nvim_create_autocmd("Filetype", {
--- 	pattern = { "oil:*" },
--- 	callback = function()
--- 		vim.schedule(function()
--- 			vim.opt.cursorline = true
--- 		end)
--- 	end,
--- })
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -99,8 +90,6 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-local map = vim.keymap.set
-local fn = vim.fn
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
 	{
@@ -154,7 +143,6 @@ require("lazy").setup({
 			},
 		},
 	},
-	-- "fatih/vim-go",
 	"github/copilot.vim",
 	-- "supermaven-inc/supermaven-nvim",
 	{
@@ -162,6 +150,15 @@ require("lazy").setup({
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-tree/nvim-web-devicons",
+		},
+	},
+	{
+		"maxandron/goplements.nvim",
+		ft = "go",
+		opts = {
+			-- your configuration comes here
+			-- or leave it empty to use the default settings
+			-- refer to the configuration section below
 		},
 	},
 	{
@@ -212,25 +209,31 @@ require("lazy").setup({
 	},
 	{
 		"neovim/nvim-lspconfig",
+		lazy = false, -- REQUIRED: tell lazy.nvim to start this plugin at startup
 		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
+			{ "ms-jpq/coq_nvim", branch = "coq" },
+			{ "ms-jpq/coq.artifacts", branch = "artifacts" },
+			{ "ms-jpq/coq.thirdparty", branch = "3p" },
 		},
+		init = function()
+			vim.g.coq_settings = {
+				auto_start = "shut-up", -- if you want to start COQ at startup
+				display = {
+					preview = {
+						border = "double",
+					},
+				},
+				keymap = {
+					manual_complete = "<C-c>",
+					pre_select = true,
+					jump_to_mark = "<C-;>",
+				},
+			}
+		end,
 	},
-	-- {
-	-- 	"Olical/conjure",
-	-- 	ft = { "clojure" },
-	-- 	init = function()
-	-- 		-- vim.g["conjure#mapping#enable_ft_mappings"] = false
-	-- 		-- vim.g["conjure#mapping#enable_defaults"] = false
-	-- 		vim.g["conjure#log#wrap"] = true
-	-- 		vim.g["conjure#mapping#prefix"] = ","
-	-- 		vim.g["conjure#highlight#enabled"] = true
-	-- 		vim.g["conjure#log#hud#enabled"] = false
-	-- 		-- vim.keymap.set("n", "<leader>gg", ":Git <CR>")
-	-- 	end,
-	-- },
 	{ -- Autoformat
 		"stevearc/conform.nvim",
 		opts = {
@@ -245,16 +248,12 @@ require("lazy").setup({
 		},
 	},
 	{
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		dependencies = {
-			{
-				"L3MON4D3/LuaSnip",
-				build = "make install_jsregexp",
-			},
-			"saadparwaiz1/cmp_luasnip",
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-path",
-		},
+		"roobert/tailwindcss-colorizer-cmp.nvim",
+		-- optionally, override the default options:
+		config = function()
+			require("tailwindcss-colorizer-cmp").setup({
+				color_square_width = 2,
+			})
+		end,
 	},
 })

@@ -1,4 +1,3 @@
--- background color: 05090f
 vim.cmd("set termguicolors")
 
 require("kanagawa").setup({
@@ -13,7 +12,7 @@ require("kanagawa").setup({
 		},
 	},
 	compile = true,
-	transparent = true,
+	-- transparent = true,
 	overrides = function(colors) -- add/modify highlights
 		local theme = colors.theme
 		return {
@@ -23,34 +22,39 @@ require("kanagawa").setup({
 			NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
 
 			TelescopeTitle = { fg = colors.palette.roninYellow, bold = true },
-			TelescopePromptBorder = { fg = colors.palette.oldWhite, bg = "none" },
-			TelescopeResultsBorder = { fg = colors.palette.oldWhite, bg = "none" },
-			TelescopePreviewBorder = { fg = colors.palette.oldWhite, bg = "none" },
+			TelescopePromptNormal = { bg = theme.ui.bg_p1 },
+			TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
+			TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+			TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
+			TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+			TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
+
+			Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1 }, -- add `blend = vim.o.pumblend` to enable transparency
+			PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 },
+			PmenuSbar = { bg = theme.ui.bg_m1 },
+			PmenuThumb = { bg = theme.ui.bg_p2 },
+
+			LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+			MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+
+			DiagnosticError = { fg = colors.palette.waveRed },
+			DiagnosticWarn = { fg = colors.palette.surimiOrange },
 		}
 	end,
 })
+
 vim.cmd.colorscheme("kanagawa-dragon")
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
-vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#e46876" })
-vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#ffa066" })
--- vim.cmd("highlight Normal guibg=none")
--- vim.cmd("hi StatusLine ctermbg=none guibg=none ")
--- vim.cmd("hi DiagnosticError guifg=#e46876")
--- vim.cmd("hi DiagnosticWarn guifg=#ffa066")
 
--- vim.api.nvim_set_hl(0, "LspCodeLens", { fg = "#6A9589", bg = "#2B3328" })
--- vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#6A9589", bg = "#1F1F28" })
+vim.api.nvim_set_hl(0, "LspCodeLens", { fg = "#6A9589", bg = "#2B3328" })
+vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#6A9589", bg = "#1F1F28" })
 
-local border = "double"
+-- local border = "double"
+local border = "rounded"
+
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
 	border = border,
 })
+
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
 	border = border,
 })
-vim.diagnostic.config({
-	float = { border = border },
-})
-vim.cmd("hi FloatBorder cterm=NONE ctermbg=NONE guibg=NONE")
--- vim.cmd("hi NormalFloat cterm=NONE ctermbg=NONE guibg=NONE")

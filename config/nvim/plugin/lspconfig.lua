@@ -72,7 +72,7 @@ vim.diagnostic.config({
 	underline = true,
 	severity_sort = false,
 	float = {
-		border = "rounded",
+		border = "double",
 		source = true,
 		header = "",
 		prefix = "",
@@ -88,7 +88,7 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 		"additionalTextEdits",
 	},
 }
-capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+-- capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 local enabled_codelens = true
 local function setup_code_lens()
@@ -146,17 +146,81 @@ local servers = {
 			},
 		},
 	},
-	elixirls = {
-		on_attach = function(_, _)
-			setup_code_lens()
-		end,
+	tailwindcss = {
+		filetypes = {
+			"css",
+			"scss",
+			"sass",
+			"html",
+			"heex",
+			"elixir",
+			"eruby",
+			"javascript",
+			"javascriptreact",
+			"typescript",
+			"typescriptreact",
+			"rust",
+			"svelte",
+		},
 		settings = {
-			dialyzerEnabled = true,
-			fetchDeps = true,
-			enableTestLenses = true,
-			suggestSpecs = true,
+			experimental = {
+				classRegex = {
+					[[class= "([^"]*)]],
+					[[class: "([^"]*)]],
+					'~H""".*class="([^"]*)".*"""',
+					'~F""".*class="([^"]*)".*"""',
+				},
+			},
+			includeLanguages = {
+				typescript = "javascript",
+				typescriptreact = "javascript",
+				["html-eex"] = "html",
+				["phoenix-heex"] = "html",
+				heex = "html",
+				eelixir = "html",
+				elixir = "html",
+				elm = "html",
+				erb = "html",
+				svelte = "html",
+				rust = "html",
+			},
+			tailwindCSS = {
+				validate = true,
+				lint = {
+					cssConflict = "error",
+					invalidApply = "error",
+					invalidConfigPath = "error",
+					invalidScreen = "error",
+					invalidTailwindDirective = "error",
+					invalidVariant = "error",
+					recommendedVariantOrder = "error",
+				},
+			},
+		},
+		handlers = {
+			["tailwindcss/getConfiguration"] = function(_, _, params, _, bufnr, _)
+				vim.lsp.buf_notify(bufnr, "tailwindcss/getConfigurationResponse", { _id = params._id })
+			end,
+		},
+		init_options = {
+			userLanguages = {
+				elixir = "phoenix-heex",
+				eelixir = "phoenix-heex",
+				heex = "phoenix-heex",
+			},
 		},
 	},
+	-- elixirls = {
+	-- 	on_attach = function(_, _)
+	-- 		setup_code_lens()
+	-- 	end,
+	-- 	settings = {
+	-- 		dialyzerEnabled = true,
+	-- 		fetchDeps = true,
+	-- 		enableTestLenses = true,
+	-- 		suggestSpecs = true,
+	-- 	},
+	-- },
 	-- hls = {},
 	-- ocamllsp = {
 	-- 	on_attach = function(_, _)
@@ -237,6 +301,9 @@ require("mason-lspconfig").setup({
 })
 
 local lspconfig = require("lspconfig")
+
+lspconfig.gleam.setup({})
+
 lspconfig.ocamllsp.setup({
 	on_attach = function(_, _)
 		setup_code_lens()
@@ -244,4 +311,14 @@ lspconfig.ocamllsp.setup({
 	settings = {
 		codelens = { enable = true },
 	},
+})
+
+lspconfig.lexical.setup({
+	cmd = { "/Users/chema/Documents/lexical/_build/dev/package/lexical/bin/start_lexical.sh" },
+	root_dir = function(fname)
+		return lspconfig.util.root_pattern("mix.exs", ".git")(fname) or vim.loop.cwd()
+	end,
+	filetypes = { "elixir", "eelixir", "heex" },
+	-- optional settings
+	settings = {},
 })

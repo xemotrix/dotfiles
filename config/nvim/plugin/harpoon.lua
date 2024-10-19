@@ -23,6 +23,7 @@ local map_nav_file = function(key, num)
 		ui.nav_file(num)
 	end)
 end
+
 map_nav_file("<C-h>", 1)
 map_nav_file("<C-j>", 2)
 map_nav_file("<C-k>", 3)
