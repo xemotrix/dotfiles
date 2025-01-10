@@ -12,8 +12,7 @@ require("kanagawa").setup({
 		},
 	},
 	compile = true,
-	-- transparent = true,
-	overrides = function(colors) -- add/modify highlights
+	overrides = function(colors)
 		local theme = colors.theme
 		return {
 			NormalFloat = { bg = "none" },
@@ -44,17 +43,3 @@ require("kanagawa").setup({
 })
 
 vim.cmd.colorscheme("kanagawa-dragon")
-
-vim.api.nvim_set_hl(0, "LspCodeLens", { fg = "#6A9589", bg = "#2B3328" })
-vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#6A9589", bg = "#1F1F28" })
-
--- local border = "double"
-local border = "rounded"
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = border,
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = border,
-})

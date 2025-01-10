@@ -6,7 +6,6 @@ require("nvim-treesitter.configs").setup({
 	ignore_install = { "norg" },
 	highlight = {
 		enable = true,
-		-- disable = { "go", "heex", "eex" },
 		disable = { "go" },
 	},
 })

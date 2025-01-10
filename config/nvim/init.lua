@@ -65,195 +65,113 @@ vim.keymap.set("n", "<leader>S", "vip:'<,'>sort<CR>", { desc = "Sort paragraph" 
 
 -- profiling
 vim.api.nvim_create_user_command("ProfileStart", function(_)
-	vim.cmd(":profile start profile.log")
-	vim.cmd(":profile func *")
-	vim.cmd(":profile file *")
+  vim.cmd(":profile start profile.log")
+  vim.cmd(":profile func *")
+  vim.cmd(":profile file *")
 end, { nargs = "?" })
 
 vim.api.nvim_create_user_command("ProfileStop", function(_)
-	vim.cmd(":profile stop")
+  vim.cmd(":profile stop")
 end, { nargs = "?" })
 
 -- [[ Basic Autocommands ]]
 vim.api.nvim_create_autocmd("TextYankPost", {
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank({ higroup = "Visual", timeout = 50 })
-	end,
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank({ higroup = "Visual", timeout = 50 })
+  end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
-	{
-		"rebelot/kanagawa.nvim",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			vim.cmd.colorscheme("kanagawa")
-		end,
-	},
-	"rhysd/vim-llvm",
-	"folke/trouble.nvim",
-	"stevearc/oil.nvim",
-	"jlanzarotta/bufexplorer",
-	"lewis6991/gitsigns.nvim",
-	"michaeljsmith/vim-indent-object",
-	"ThePrimeagen/harpoon",
-	"junegunn/vim-easy-align",
-	"lewis6991/gitsigns.nvim",
-	"tpope/vim-commentary",
-	"tpope/vim-sleuth",
-	"tpope/vim-surround",
-	"rcarriga/nvim-notify",
-	"kana/vim-textobj-user",
-	"neovimhaskell/nvim-hs.vim",
-	"isovector/cornelis",
-	{
-		"Julian/lean.nvim",
-		event = { "BufReadPre *.lean", "BufNewFile *.lean" },
-		dependencies = {
-			"neovim/nvim-lspconfig",
-			"nvim-lua/plenary.nvim",
-		},
-		opts = {
-			init_options = {
-				editDelay = 0,
-				hasWidgets = true,
-			},
-			mappings = true,
-
-			infoview = {
-				autoopen = true,
-				horizontal_position = "bottom",
-				separate_tab = false,
-				indicators = "auto",
-			},
-			progress_bars = {
-				enable = true,
-				character = "│",
-				priority = 10,
-			},
-		},
-	},
-	"github/copilot.vim",
-	-- "supermaven-inc/supermaven-nvim",
-	{
-		"nvimdev/lspsaga.nvim",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"nvim-tree/nvim-web-devicons",
-		},
-	},
-	{
-		"maxandron/goplements.nvim",
-		ft = "go",
-		opts = {
-			-- your configuration comes here
-			-- or leave it empty to use the default settings
-			-- refer to the configuration section below
-		},
-	},
-	{
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		opts = {
-			ensure_installed = "all",
-			sync_install = false,
-			auto_install = true,
-			ignore_install = { "norg" },
-			highlight = {
-				enable = true,
-				disable = { "go" },
-			},
-		},
-	},
-	{
-		"tpope/vim-fugitive",
-		config = function()
-			vim.keymap.set("n", "<leader>gg", ":Git <CR>")
-		end,
-	},
-	{
-		"mbbill/undotree",
-		config = function()
-			vim.cmd([[
+  {
+    "rebelot/kanagawa.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme("kanagawa")
+    end,
+  },
+  "stevearc/oil.nvim",
+  "jlanzarotta/bufexplorer",
+  "lewis6991/gitsigns.nvim",
+  "michaeljsmith/vim-indent-object",
+  "ThePrimeagen/harpoon",
+  "junegunn/vim-easy-align",
+  "tpope/vim-commentary",
+  "tpope/vim-sleuth",
+  "tpope/vim-surround",
+  "github/copilot.vim",
+  {
+    "folke/trouble.nvim",
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = "Trouble",
+    keys = {
+      {
+        "<leader>tt",
+        "<cmd>Trouble diagnostics toggle<cr>",
+        desc = "Diagnostics (Trouble)",
+      },
+    },
+  },
+  "nvim-treesitter/nvim-treesitter",
+  {
+    "tpope/vim-fugitive",
+    config = function()
+      vim.keymap.set("n", "<leader>gg", ":Git <CR>")
+      vim.keymap.set("n", "gs", ":Gdiffsplit <CR>")
+    end,
+  },
+  {
+    "mbbill/undotree",
+    config = function()
+      vim.cmd([[
       let g:undotree_WindowLayout = 1
       nnoremap <leader>u :UndotreeToggle<CR>
       ]])
-		end,
-	},
-	{
-		"nvim-telescope/telescope.nvim",
-		event = "VimEnter",
-		branch = "0.1.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			{
-				"nvim-telescope/telescope-fzf-native.nvim",
-				build = "make",
-				cond = function()
-					return vim.fn.executable("make") == 1
-				end,
-			},
-			{ "nvim-telescope/telescope-ui-select.nvim" },
-			{ "nvim-tree/nvim-web-devicons" },
-		},
-	},
-	{
-		"neovim/nvim-lspconfig",
-		lazy = false, -- REQUIRED: tell lazy.nvim to start this plugin at startup
-		dependencies = {
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
-			{ "ms-jpq/coq_nvim", branch = "coq" },
-			{ "ms-jpq/coq.artifacts", branch = "artifacts" },
-			{ "ms-jpq/coq.thirdparty", branch = "3p" },
-		},
-		init = function()
-			vim.g.coq_settings = {
-				auto_start = "shut-up", -- if you want to start COQ at startup
-				display = {
-					preview = {
-						border = "double",
-					},
-				},
-				keymap = {
-					manual_complete = "<C-c>",
-					pre_select = true,
-					jump_to_mark = "<C-;>",
-				},
-			}
-		end,
-	},
-	{ -- Autoformat
-		"stevearc/conform.nvim",
-		opts = {
-			notify_on_error = false,
-			format_on_save = {
-				timeout_ms = 500,
-				lsp_fallback = true,
-			},
-			formatters_by_ft = {
-				lua = { "stylua" },
-			},
-		},
-	},
-	{
-		"roobert/tailwindcss-colorizer-cmp.nvim",
-		-- optionally, override the default options:
-		config = function()
-			require("tailwindcss-colorizer-cmp").setup({
-				color_square_width = 2,
-			})
-		end,
-	},
+    end,
+  },
+  {
+    "nvim-telescope/telescope.nvim",
+    event = "VimEnter",
+    branch = "0.1.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = "make",
+        cond = function()
+          return vim.fn.executable("make") == 1
+        end,
+      },
+      { "nvim-telescope/telescope-ui-select.nvim" },
+      { "nvim-tree/nvim-web-devicons" },
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    lazy = false, -- REQUIRED: tell lazy.nvim to start this plugin at startup
+    dependencies = {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+      "WhoIsSethDaniel/mason-tool-installer.nvim",
+    },
+  },
+  {
+    'ShinKage/idris2-nvim',
+    dependencies = { 'MunifTanjim/nui.nvim' }
+  },
+  'hrsh7th/cmp-nvim-lsp',
+  'hrsh7th/cmp-buffer',
+  'hrsh7th/cmp-path',
+  'hrsh7th/cmp-cmdline',
+  'hrsh7th/nvim-cmp',
 })

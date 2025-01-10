@@ -1,32 +1,25 @@
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 	callback = function()
-		vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", { buffer = 0 })
-		vim.keymap.set("n", "gp", "<cmd>Lspsaga peek_definition<CR>", { buffer = 0 })
-		vim.keymap.set("n", "gP", "<cmd>Lspsaga peek_type_definition<CR>", { buffer = 0 })
-
-		vim.keymap.set("n", "ge", "<cmd>Lspsaga outline<CR>", { buffer = 0 })
-		vim.keymap.set("n", "gho", "<cmd>Lspsaga outgoing_calls<CR>", { buffer = 0 })
-		vim.keymap.set("n", "ghi", "<cmd>Lspsaga incoming_calls<CR>", { buffer = 0 })
-		-- vim.keymap.set("n", "<leader>dj", "<cmd>Lspsaga diagnostic_jump_next<CR>", { buffer = 0 })
-		-- vim.keymap.set("n", "<leader>dk", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { buffer = 0 })
-		--
-		--
-		-- vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = 0 })
 		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
 		vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
 		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = 0 })
-
 		vim.keymap.set("n", "<leader>dj", vim.diagnostic.goto_next, { buffer = 0 })
 		vim.keymap.set("n", "<leader>dk", vim.diagnostic.goto_prev, { buffer = 0 })
-
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
 		vim.keymap.set("n", "<leader>li", function()
 			vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
 		end)
 	end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	callback = function()
+		vim.lsp.buf.format { async = false }
+	end
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -65,12 +58,24 @@ sign({ name = "DiagnosticSignWarn", text = "" })
 sign({ name = "DiagnosticSignHint", text = "" })
 sign({ name = "DiagnosticSignInfo", text = "" })
 
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+	vim.lsp.handlers.hover, {
+		border = "single"
+	}
+)
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+	vim.lsp.handlers.signature_help, {
+		border = "single"
+	}
+)
+
 vim.diagnostic.config({
 	virtual_text = true,
 	signs = true,
 	update_in_insert = false,
 	underline = true,
-	severity_sort = false,
+	severity_sort = true,
 	float = {
 		border = "double",
 		source = true,
@@ -88,7 +93,6 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 		"additionalTextEdits",
 	},
 }
--- capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 local enabled_codelens = true
 local function setup_code_lens()
@@ -210,31 +214,19 @@ local servers = {
 			},
 		},
 	},
-	-- elixirls = {
-	-- 	on_attach = function(_, _)
-	-- 		setup_code_lens()
-	-- 	end,
-	-- 	settings = {
-	-- 		dialyzerEnabled = true,
-	-- 		fetchDeps = true,
-	-- 		enableTestLenses = true,
-	-- 		suggestSpecs = true,
-	-- 	},
-	-- },
-	-- hls = {},
-	-- ocamllsp = {
-	-- 	on_attach = function(_, _)
-	-- 		setup_code_lens()
-	-- 	end,
-	-- 	settings = {
-	-- 		codelens = { enable = true },
-	-- 	},
-	-- },
-	-- pyright = {},
+	elixirls = {
+		cmd = { "/Users/chema/elixir-ls/language_server.sh" },
+		on_attach = function(_, _)
+			setup_code_lens()
+		end,
+		settings = {
+			dialyzerEnabled = true,
+			fetchDeps = true,
+			enableTestLenses = true,
+			suggestSpecs = true,
+		},
+	},
 	rust_analyzer = {
-		-- on_attach = function(_, bufnr)
-		-- 	vim.lsp.inlay_hint.enable(bufnr, true)
-		-- end,
 		rust_analyzer = {
 			inlay_hints = {
 				enable = true,
@@ -244,12 +236,7 @@ local servers = {
 			},
 		},
 	},
-	-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-
 	lua_ls = {
-		-- cmd = {...},
-		-- filetypes { ...},
-		-- capabilities = {},
 		settings = {
 			Lua = {
 				runtime = { version = "LuaJIT" },
@@ -269,11 +256,6 @@ local servers = {
 			},
 		},
 	},
-	clojure_lsp = {
-		on_attach = function(_, _)
-			setup_code_lens()
-		end,
-	},
 }
 
 -- Ensure the servers and tools above are installed
@@ -288,9 +270,9 @@ local ensure_installed = vim.tbl_keys(servers or {})
 vim.list_extend(ensure_installed, { "stylua" })
 require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 require("mason-lspconfig").setup({
-	opts = {
-		inlay_hints = { enabled = true },
-	},
+	ensure_installed = ensure_installed,
+	automatic_installation = true,
+	opts = {},
 	handlers = {
 		function(server_name)
 			local server = servers[server_name] or {}
@@ -313,12 +295,12 @@ lspconfig.ocamllsp.setup({
 	},
 })
 
-lspconfig.lexical.setup({
-	cmd = { "/Users/chema/Documents/lexical/_build/dev/package/lexical/bin/start_lexical.sh" },
-	root_dir = function(fname)
-		return lspconfig.util.root_pattern("mix.exs", ".git")(fname) or vim.loop.cwd()
-	end,
-	filetypes = { "elixir", "eelixir", "heex" },
-	-- optional settings
-	settings = {},
+lspconfig.hls.setup({
+	cmd = { "/Users/chema/.ghcup/hls/2.9.0.1/bin/haskell-language-server-wrapper", "--lsp" },
+	filetypes = { 'haskell', 'lhaskell', 'cabal' },
+	settings = {
+		haskell = {
+			formattingProvider = 'ormolu',
+		}
+	},
 })
