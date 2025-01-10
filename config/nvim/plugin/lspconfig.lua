@@ -269,8 +269,10 @@ require("mason").setup()
 local ensure_installed = vim.tbl_keys(servers or {})
 vim.list_extend(ensure_installed, { "stylua" })
 require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+
+---@diagnostic disable-next-line: missing-fields
 require("mason-lspconfig").setup({
-	ensure_installed = ensure_installed,
+	-- ensure_installed = ensure_installed,
 	automatic_installation = true,
 	opts = {},
 	handlers = {
@@ -286,14 +288,14 @@ local lspconfig = require("lspconfig")
 
 lspconfig.gleam.setup({})
 
-lspconfig.ocamllsp.setup({
-	on_attach = function(_, _)
-		setup_code_lens()
-	end,
-	settings = {
-		codelens = { enable = true },
-	},
-})
+-- lspconfig.ocamllsp.setup({
+-- 	on_attach = function(_, _)
+-- 		setup_code_lens()
+-- 	end,
+-- 	settings = {
+-- 		codelens = { enable = true },
+-- 	},
+-- })
 
 lspconfig.hls.setup({
 	cmd = { "/Users/chema/.ghcup/hls/2.9.0.1/bin/haskell-language-server-wrapper", "--lsp" },

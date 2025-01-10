@@ -110,6 +110,17 @@ require("lazy").setup({
   "tpope/vim-sleuth",
   "tpope/vim-surround",
   "github/copilot.vim",
+  "gennaro-tedesco/nvim-peekup",
+  {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+      require('dashboard').setup {
+        -- config
+      }
+    end,
+    dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+  },
   {
     "folke/trouble.nvim",
     opts = {}, -- for default options, refer to the configuration section for custom setup.
