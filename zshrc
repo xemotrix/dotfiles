@@ -4,8 +4,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
-# ZSH_THEME=""
-# source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/powerlevel10k/powerlevel10k.zsh-theme
@@ -28,10 +26,13 @@ export PATH="$PATH:/Users/chema/.local/bin"
 export PATH="$PATH:/Users/chema/go/bin"
 export PATH="$PATH:/Users/chema/google-cloud-sdk/bin"
 export PATH="$PATH:/Users/chema/rust-analyzer"
+export PATH="$PATH:/Users/chema/elixir-ls"
 export PATH="/opt/homebrew/opt/llvm@13/bin:$PATH"
-export PATH="$HOME/.cabal/bin:$PATH"
 export PATH="$HOME/.elan/bin:$PATH"
 export PATH="$HOME/Library/Application Support/Coursier/bin:$PATH"
+export PATH="$HOME/.cabal/bin:$PATH"
+export PATH="$HOME/.ghcup/bin:$PATH"
+export PATH="$HOME/.pack/bin:$HOME/.idris2/bin:$PATH"
 
 export GONOSUMDB=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
 export GONOPROXY=gopkg.cabify.tools,gitlab.otters.xyz,secondary.gitlab.otters.xyz,gitlab.com/cabify,github.com/cabify
@@ -59,5 +60,3 @@ export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/homebrew/lib/pkgconfig/"
 
 export LDFLAGS="-L/opt/homebrew/opt/llvm@13/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm@13/include"
-
-export PATH="/opt/homebrew/opt/icu4c/bin:$PATH"
