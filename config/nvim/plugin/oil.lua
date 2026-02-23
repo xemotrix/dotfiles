@@ -1,4 +1,5 @@
 require("oil").setup({
+	default_file_explorer = true,
 	columns = {
 		"birthtime",
 		"permissions",
@@ -21,6 +22,7 @@ require("oil").setup({
 		["<C-l>"] = "actions.refresh",
 		["-"] = "actions.parent",
 		["_"] = "actions.open_cwd",
+		["gs"] = { "actions.change_sort", mode = "n" },
 		-- ["`"] = "actions.cd",
 		-- ["~"] = "actions.tcd",
 		-- ["g."] = "actions.toggle_hidden",

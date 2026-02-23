@@ -27,11 +27,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	callback = function()
 		local params = vim.lsp.util.make_range_params()
 		params.context = { only = { "source.organizeImports" } }
-		-- buf_request_sync defaults to a 1000ms timeout. Depending on your
-		-- machine and codebase, you may want longer. Add an additional
-		-- argument after params if you find that you have to write the file
-		-- twice for changes to be saved.
-		-- E.g., vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
 		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
 		for cid, res in pairs(result or {}) do
 			for _, r in pairs(res.result or {}) do
@@ -94,35 +89,8 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 	},
 }
 
-local enabled_codelens = true
-local function setup_code_lens()
-	vim.keymap.set("n", "<leader>lc", function()
-		enabled_codelens = not enabled_codelens
-		if enabled_codelens then
-			vim.lsp.codelens.refresh({ bufnr = 0 })
-			vim.print("CodeLens enabled")
-		else
-			vim.lsp.codelens.clear()
-			vim.print("CodeLens disabled")
-		end
-	end)
-
-	vim.keymap.set("n", "<leader>lr", function()
-		vim.lsp.codelens.run()
-	end)
-	vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-		group = vim.api.nvim_create_augroup("lsp-codelens", { clear = true }),
-		callback = function()
-			if enabled_codelens then
-				vim.lsp.codelens.refresh({ bufnr = 0 })
-			end
-		end,
-	})
-end
-
 local servers = {
 	gopls = {
-		on_attach = setup_code_lens,
 		settings = {
 			gopls = {
 				analyses = {
@@ -150,6 +118,11 @@ local servers = {
 			},
 		},
 	},
+	svelte = {},
+	ts_ls = {},
+	-- tsgo = {},
+	cssls = {}, -- scss
+	clangd = {},
 	tailwindcss = {
 		filetypes = {
 			"css",
@@ -217,7 +190,6 @@ local servers = {
 	elixirls = {
 		cmd = { "/Users/chema/elixir-ls/language_server.sh" },
 		on_attach = function(_, _)
-			setup_code_lens()
 		end,
 		settings = {
 			dialyzerEnabled = true,
@@ -258,21 +230,13 @@ local servers = {
 	},
 }
 
--- Ensure the servers and tools above are installed
---  To check the current status of installed tools and/or manually install
---  other tools, you can run
---    :Mason
 require("mason").setup()
-
--- You can add other tools here that you want Mason to install
--- for you, so that they are available from within Neovim.
 local ensure_installed = vim.tbl_keys(servers or {})
-vim.list_extend(ensure_installed, { "stylua" })
 require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 ---@diagnostic disable-next-line: missing-fields
 require("mason-lspconfig").setup({
-	-- ensure_installed = ensure_installed,
+	ensure_installed = ensure_installed,
 	automatic_installation = true,
 	opts = {},
 	handlers = {
@@ -281,28 +245,5 @@ require("mason-lspconfig").setup({
 			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 			require("lspconfig")[server_name].setup(server)
 		end,
-	},
-})
-
-local lspconfig = require("lspconfig")
-
-lspconfig.gleam.setup({})
-
--- lspconfig.ocamllsp.setup({
--- 	on_attach = function(_, _)
--- 		setup_code_lens()
--- 	end,
--- 	settings = {
--- 		codelens = { enable = true },
--- 	},
--- })
-
-lspconfig.hls.setup({
-	cmd = { "/Users/chema/.ghcup/hls/2.9.0.1/bin/haskell-language-server-wrapper", "--lsp" },
-	filetypes = { 'haskell', 'lhaskell', 'cabal' },
-	settings = {
-		haskell = {
-			formattingProvider = 'ormolu',
-		}
 	},
 })

@@ -60,3 +60,7 @@ export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/homebrew/lib/pkgconfig/"
 
 export LDFLAGS="-L/opt/homebrew/opt/llvm@13/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm@13/include"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

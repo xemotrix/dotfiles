@@ -62,6 +62,7 @@ vim.keymap.set("n", "<Up>", "<C-w><C-k>", { desc = "Move focus to the upper wind
 -- "macros"
 -- sort paragraph
 vim.keymap.set("n", "<leader>S", "vip:'<,'>sort<CR>", { desc = "Sort paragraph" })
+vim.keymap.set("v", "<leader>j", "y`>pgv:Commentary<CR>", { desc = "Duplicate and comment" })
 
 -- profiling
 vim.api.nvim_create_user_command("ProfileStart", function(_)
@@ -97,7 +98,8 @@ require("lazy").setup({
     lazy = false,
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme("kanagawa")
+      require("kanagawa").setup(require("theme"))
+      vim.cmd.colorscheme("kanagawa-dragon")
     end,
   },
   "stevearc/oil.nvim",
@@ -109,7 +111,8 @@ require("lazy").setup({
   "tpope/vim-commentary",
   "tpope/vim-sleuth",
   "tpope/vim-surround",
-  "github/copilot.vim",
+  { 'augmentcode/augment.vim' },
+  'crusj/hierarchy-tree-go.nvim',
   "gennaro-tedesco/nvim-peekup",
   {
     "folke/trouble.nvim",
@@ -124,6 +127,7 @@ require("lazy").setup({
     },
   },
   "nvim-treesitter/nvim-treesitter",
+  "nvim-treesitter/nvim-treesitter-textobjects",
   {
     "tpope/vim-fugitive",
     config = function()
@@ -175,4 +179,6 @@ require("lazy").setup({
   'hrsh7th/cmp-path',
   'hrsh7th/cmp-cmdline',
   'hrsh7th/nvim-cmp',
+  'whonore/Coqtail',
+  -- 'ggandor/lightspeed.nvim'
 })
