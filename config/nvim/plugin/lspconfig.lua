@@ -7,8 +7,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
 		vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
 		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = 0 })
-		vim.keymap.set("n", "<leader>dj", vim.diagnostic.goto_next, { buffer = 0 })
-		vim.keymap.set("n", "<leader>dk", vim.diagnostic.goto_prev, { buffer = 0 })
+		vim.keymap.set("n", "<leader>dj", function()
+			vim.diagnostic.jump({ count = 1 })
+		end, { buffer = 0 })
+		vim.keymap.set("n", "<leader>dk", function()
+			vim.diagnostic.jump({ count = -1 })
+		end, { buffer = 0 })
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
 		vim.keymap.set("n", "<leader>li", function()
 			vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
@@ -18,8 +22,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	callback = function()
-		vim.lsp.buf.format { async = false }
-	end
+		vim.lsp.buf.format({ async = false })
+	end,
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -53,17 +57,13 @@ sign({ name = "DiagnosticSignWarn", text = "" })
 sign({ name = "DiagnosticSignHint", text = "" })
 sign({ name = "DiagnosticSignInfo", text = "" })
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-	vim.lsp.handlers.hover, {
-		border = "single"
-	}
-)
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = "single",
+})
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-	vim.lsp.handlers.signature_help, {
-		border = "single"
-	}
-)
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+	border = "single",
+})
 
 vim.diagnostic.config({
 	virtual_text = true,
@@ -91,6 +91,7 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 
 local servers = {
 	gopls = {
+		cmd = { "/Users/chema/go/bin/gopls" },
 		settings = {
 			gopls = {
 				analyses = {
@@ -118,9 +119,9 @@ local servers = {
 			},
 		},
 	},
-	svelte = {},
+	-- svelte = {},
 	ts_ls = {},
-	-- tsgo = {},
+	eslint = {},
 	cssls = {}, -- scss
 	clangd = {},
 	tailwindcss = {
@@ -189,8 +190,7 @@ local servers = {
 	},
 	elixirls = {
 		cmd = { "/Users/chema/elixir-ls/language_server.sh" },
-		on_attach = function(_, _)
-		end,
+		on_attach = function(_, _) end,
 		settings = {
 			dialyzerEnabled = true,
 			fetchDeps = true,
@@ -214,10 +214,6 @@ local servers = {
 				runtime = { version = "LuaJIT" },
 				workspace = {
 					checkThirdParty = false,
-					library = {
-						"${3rd}/luv/library",
-						unpack(vim.api.nvim_get_runtime_file("", true)),
-					},
 				},
 				completion = {
 					callSnippet = "Replace",
