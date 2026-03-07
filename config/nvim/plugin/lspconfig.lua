@@ -1,45 +1,39 @@
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 	callback = function()
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
+		vim.keymap.set("n", "K", function()
+			vim.lsp.buf.hover({ border = "single" })
+		end, { buffer = 0 })
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = 0 })
 		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
 		vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
-		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = 0 })
+		vim.keymap.set("i", "<C-k>", function()
+			vim.lsp.buf.signature_help({ border = "single" })
+		end, { buffer = 0 })
 		vim.keymap.set("n", "<leader>dj", function()
-			vim.diagnostic.jump({ count = 1 })
+			vim.diagnostic.jump({
+				count = 1,
+				float = true,
+			})
 		end, { buffer = 0 })
 		vim.keymap.set("n", "<leader>dk", function()
-			vim.diagnostic.jump({ count = -1 })
+			vim.diagnostic.jump({
+				count = -1,
+				float = true,
+			})
 		end, { buffer = 0 })
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
 		vim.keymap.set("n", "<leader>li", function()
-			vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
+			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 		end)
+
+		vim.keymap.set("n", "<leader>a", vim.diagnostic.open_float, { buffer = 0 })
 	end,
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	callback = function()
-		vim.lsp.buf.format({ async = false })
-	end,
-})
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*.go",
-	callback = function()
-		local params = vim.lsp.util.make_range_params()
-		params.context = { only = { "source.organizeImports" } }
-		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
-		for cid, res in pairs(result or {}) do
-			for _, r in pairs(res.result or {}) do
-				if r.edit then
-					local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
-					vim.lsp.util.apply_workspace_edit(r.edit, enc)
-				end
-			end
-		end
 		vim.lsp.buf.format({ async = false })
 	end,
 })
@@ -56,14 +50,6 @@ sign({ name = "DiagnosticSignError", text = "" })
 sign({ name = "DiagnosticSignWarn", text = "" })
 sign({ name = "DiagnosticSignHint", text = "" })
 sign({ name = "DiagnosticSignInfo", text = "" })
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = "single",
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = "single",
-})
 
 vim.diagnostic.config({
 	virtual_text = true,

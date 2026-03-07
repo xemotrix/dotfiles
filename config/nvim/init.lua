@@ -35,6 +35,8 @@ vim.opt.sidescrolloff = 8
 vim.opt.hlsearch = true
 vim.opt.wrap = false
 
+vim.o.winborder = "single"
+
 -- [[ Basic Keymaps ]]
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
@@ -47,11 +49,6 @@ vim.keymap.set("v", "n", "nzz")
 vim.keymap.set("v", "N", "Nzz")
 vim.keymap.set("x", "<leader>p", '"_dP')
 vim.keymap.set("x", "<leader>p", '"_dP')
--- Diagnostic keymaps
-vim.keymap.set("n", "<leader>dk", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
-vim.keymap.set("n", "<leader>dj", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
-vim.keymap.set("n", "<leader>a", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
--- vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Keybinds to make split navigation easier.
 vim.keymap.set("n", "<Left>", "<C-w><C-h>", { desc = "Move focus to the left window" })
@@ -92,12 +89,21 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
--- [[ Install `lazy.nvim` plugin manager ]]
+-- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-end ---@diagnostic disable-next-line: undefined-field
+	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
+end
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
@@ -120,8 +126,6 @@ require("lazy").setup({
 	"tpope/vim-commentary",
 	"tpope/vim-sleuth",
 	"tpope/vim-surround",
-	{ "augmentcode/augment.vim" },
-	"crusj/hierarchy-tree-go.nvim",
 	"gennaro-tedesco/nvim-peekup",
 	{
 		"folke/trouble.nvim",
@@ -188,7 +192,7 @@ require("lazy").setup({
 	"hrsh7th/cmp-path",
 	"hrsh7th/cmp-cmdline",
 	"hrsh7th/nvim-cmp",
-	"whonore/Coqtail",
+	"onsails/lspkind.nvim",
 	-- 'ggandor/lightspeed.nvim'
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
