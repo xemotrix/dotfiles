@@ -8,6 +8,7 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias nv='nvim .'
 alias gtree='git log --oneline --all --graph --decorate'
 alias memento='~/Documents/memento/bin/memento'
+alias docker-compose='podman compose'
 
 function fish_greeting
 end
@@ -46,10 +47,12 @@ set --erase _asdf_shims
 #   - the correct directories to the PATH
 #   - auto-completion for the opam binary
 # This section can be safely removed at any time if needed.
-test -r '/Users/chema/.opam/opam-init/init.fish' && source '/Users/chema/.opam/opam-init/init.fish' > /dev/null 2> /dev/null; or true
+# test -r '/Users/chema/.opam/opam-init/init.fish' && source '/Users/chema/.opam/opam-init/init.fish' > /dev/null 2> /dev/null; or true
 # END opam configuration
 
 set -q GHCUP_INSTALL_BASE_PREFIX[1]; or set GHCUP_INSTALL_BASE_PREFIX $HOME ; set -gx PATH $HOME/.cabal/bin /Users/chema/.ghcup/bin $PATH # ghcup-env
+
+set -gx DOCKER_HOST "unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
 
 set -gx EDITOR nvim
 set -gx VISUAL nvim

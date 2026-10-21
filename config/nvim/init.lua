@@ -56,6 +56,26 @@ vim.keymap.set("n", "<Right>", "<C-w><C-l>", { desc = "Move focus to the right w
 vim.keymap.set("n", "<Down>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<Up>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+-- copy buffer file path to clipboard
+vim.keymap.set("n", "<leader>yp", function()
+	local path = vim.fn.expand("%:p")
+	if path == "" then
+		vim.notify("Buffer has no file path", vim.log.levels.WARN)
+		return
+	end
+	vim.fn.setreg("+", path)
+end, { desc = "Copy buffer file path to clipboard" })
+
+-- copy buffer file path with line number to clipboard
+vim.keymap.set("n", "<leader>yl", function()
+	local path = vim.fn.expand("%:p")
+	if path == "" then
+		vim.notify("Buffer has no file path", vim.log.levels.WARN)
+		return
+	end
+	vim.fn.setreg("+", path .. ":" .. vim.fn.line("."))
+end, { desc = "Copy buffer file path with line number to clipboard" })
+
 -- "macros"
 -- sort paragraph
 vim.keymap.set("n", "<leader>S", "vip:'<,'>sort<CR>", { desc = "Sort paragraph" })

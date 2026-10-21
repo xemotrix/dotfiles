@@ -5,6 +5,7 @@ require("telescope").setup({
 		},
 	},
 	defaults = {
+		file_ignore_patterns = { "/mocks/", "^mocks/" },
 		layout_strategy = "vertical",
 		layout_config = {
 			height = 0.95,

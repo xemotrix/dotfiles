@@ -1,3 +1,48 @@
+-- LSP location lists: drop generated mocks so a symbol with one real
+-- implementation jumps straight there instead of prompting.
+local ignore_path = "/mocks/"
+
+local function jump_to(item)
+	local from = { vim.fn.bufnr("%"), vim.fn.line("."), vim.fn.col("."), 0 }
+	vim.fn.settagstack(vim.api.nvim_get_current_win(), {
+		items = { { tagname = vim.fn.expand("<cword>"), from = from } },
+	}, "t")
+	vim.cmd.edit(vim.fn.fnameescape(item.filename))
+	vim.api.nvim_win_set_cursor(0, { item.lnum, item.col - 1 })
+	vim.cmd("normal! zz")
+end
+
+local function on_list(list)
+	local items = vim.tbl_filter(function(item)
+		return not string.find(item.filename or "", ignore_path, 1, true)
+	end, list.items)
+
+	-- Everything was a mock (e.g. searching from inside one): keep the originals.
+	if #items == 0 then
+		items = list.items
+	end
+
+	if #items == 1 then
+		jump_to(items[1])
+		return
+	end
+
+	local conf = require("telescope.config").values
+	require("telescope.pickers")
+		.new({}, {
+			prompt_title = list.title,
+			finder = require("telescope.finders").new_table({
+				results = items,
+				entry_maker = require("telescope.make_entry").gen_from_quickfix({}),
+			}),
+			previewer = conf.qflist_previewer({}),
+			sorter = conf.generic_sorter({}),
+			push_cursor_on_edit = true,
+			push_tagstack_on_edit = true,
+		})
+		:find()
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 	callback = function()
@@ -6,8 +51,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end, { buffer = 0 })
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = 0 })
-		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = 0 })
-		vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
+		vim.keymap.set("n", "gi", function()
+			vim.lsp.buf.implementation({ on_list = on_list })
+		end, { buffer = 0 })
+		vim.keymap.set("n", "gr", function()
+			vim.lsp.buf.references(nil, { on_list = on_list })
+		end, { buffer = 0 })
 		vim.keymap.set("i", "<C-k>", function()
 			vim.lsp.buf.signature_help({ border = "single" })
 		end, { buffer = 0 })
@@ -27,8 +76,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "<leader>li", function()
 			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 		end)
-
-		vim.keymap.set("n", "<leader>a", vim.diagnostic.open_float, { buffer = 0 })
 	end,
 })
 
