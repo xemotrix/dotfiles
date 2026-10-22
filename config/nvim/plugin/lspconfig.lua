@@ -74,8 +74,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end, { buffer = 0 })
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = 0 })
 		vim.keymap.set("n", "<leader>li", function()
-			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-		end)
+			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }), { bufnr = 0 })
+		end, { buffer = 0 })
 	end,
 })
 
@@ -85,22 +85,16 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	end,
 })
 
-local sign = function(opts)
-	vim.fn.sign_define(opts.name, {
-		texthl = opts.name,
-		text = opts.text,
-		numhl = "",
-	})
-end
-
-sign({ name = "DiagnosticSignError", text = "" })
-sign({ name = "DiagnosticSignWarn", text = "" })
-sign({ name = "DiagnosticSignHint", text = "" })
-sign({ name = "DiagnosticSignInfo", text = "" })
-
 vim.diagnostic.config({
 	virtual_text = true,
-	signs = true,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "",
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.HINT] = "",
+			[vim.diagnostic.severity.INFO] = "",
+		},
+	},
 	update_in_insert = false,
 	underline = true,
 	severity_sort = true,
@@ -129,6 +123,7 @@ local servers = {
 			gopls = {
 				analyses = {
 					unusedparams = true,
+					ST1000 = false, -- missing package comment
 				},
 				staticcheck = true,
 				gofumpt = true,
@@ -174,28 +169,28 @@ local servers = {
 			"svelte",
 		},
 		settings = {
-			experimental = {
-				classRegex = {
-					[[class= "([^"]*)]],
-					[[class: "([^"]*)]],
-					'~H""".*class="([^"]*)".*"""',
-					'~F""".*class="([^"]*)".*"""',
-				},
-			},
-			includeLanguages = {
-				typescript = "javascript",
-				typescriptreact = "javascript",
-				["html-eex"] = "html",
-				["phoenix-heex"] = "html",
-				heex = "html",
-				eelixir = "html",
-				elixir = "html",
-				elm = "html",
-				erb = "html",
-				svelte = "html",
-				rust = "html",
-			},
 			tailwindCSS = {
+				experimental = {
+					classRegex = {
+						[[class= "([^"]*)]],
+						[[class: "([^"]*)]],
+						'~H""".*class="([^"]*)".*"""',
+						'~F""".*class="([^"]*)".*"""',
+					},
+				},
+				includeLanguages = {
+					typescript = "javascript",
+					typescriptreact = "javascript",
+					["html-eex"] = "html",
+					["phoenix-heex"] = "html",
+					heex = "html",
+					eelixir = "html",
+					elixir = "html",
+					elm = "html",
+					erb = "html",
+					svelte = "html",
+					rust = "html",
+				},
 				validate = true,
 				lint = {
 					cssConflict = "error",
@@ -208,11 +203,6 @@ local servers = {
 				},
 			},
 		},
-		handlers = {
-			["tailwindcss/getConfiguration"] = function(_, _, params, _, bufnr, _)
-				vim.lsp.buf_notify(bufnr, "tailwindcss/getConfigurationResponse", { _id = params._id })
-			end,
-		},
 		init_options = {
 			userLanguages = {
 				elixir = "phoenix-heex",
@@ -223,24 +213,16 @@ local servers = {
 	},
 	elixirls = {
 		cmd = { "/Users/chema/elixir-ls/language_server.sh" },
-		on_attach = function(_, _) end,
 		settings = {
-			dialyzerEnabled = true,
-			fetchDeps = true,
-			enableTestLenses = true,
-			suggestSpecs = true,
-		},
-	},
-	rust_analyzer = {
-		rust_analyzer = {
-			inlay_hints = {
-				enable = true,
-				showParameterNames = true,
-				parameterHintsPrefix = "<- ",
-				otherHintsPrefix = "=> ",
+			elixirLS = {
+				dialyzerEnabled = true,
+				fetchDeps = true,
+				enableTestLenses = true,
+				suggestSpecs = true,
 			},
 		},
 	},
+	rust_analyzer = {},
 	lua_ls = {
 		settings = {
 			Lua = {
@@ -259,20 +241,17 @@ local servers = {
 	},
 }
 
-require("mason").setup()
-local ensure_installed = vim.tbl_keys(servers or {})
-require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+-- Native LSP config (nvim 0.11+): nvim-lspconfig only ships the defaults in
+-- lsp/*.lua, these get merged on top of them.
+vim.lsp.config("*", { capabilities = capabilities })
+for name, config in pairs(servers) do
+	vim.lsp.config(name, config)
+end
 
----@diagnostic disable-next-line: missing-fields
-require("mason-lspconfig").setup({
-	ensure_installed = ensure_installed,
-	automatic_installation = true,
-	opts = {},
-	handlers = {
-		function(server_name)
-			local server = servers[server_name] or {}
-			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-			require("lspconfig")[server_name].setup(server)
-		end,
-	},
-})
+require("mason").setup()
+local ensure_installed = vim.tbl_keys(servers)
+require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+-- Enables every mason-installed server.
+require("mason-lspconfig").setup()
+-- And the ones not installed through mason (gopls, elixirls).
+vim.lsp.enable(ensure_installed)

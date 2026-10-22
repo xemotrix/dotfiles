@@ -105,7 +105,9 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
 	callback = function()
-		vim.highlight.on_yank({ higroup = "Visual", timeout = 50 })
+		-- hl_op replaces on_yank in nvim 0.13
+		local hl_op = vim.hl.hl_op or vim.hl.on_yank
+		hl_op({ higroup = "Visual", timeout = 50 })
 	end,
 })
 
@@ -141,7 +143,6 @@ require("lazy").setup({
 	"jlanzarotta/bufexplorer",
 	"lewis6991/gitsigns.nvim",
 	"michaeljsmith/vim-indent-object",
-	"ThePrimeagen/harpoon",
 	"junegunn/vim-easy-align",
 	"tpope/vim-commentary",
 	"tpope/vim-sleuth",
@@ -159,8 +160,8 @@ require("lazy").setup({
 			},
 		},
 	},
-	"nvim-treesitter/nvim-treesitter",
-	"nvim-treesitter/nvim-treesitter-textobjects",
+	{ "nvim-treesitter/nvim-treesitter", branch = "main", lazy = false, build = ":TSUpdate" },
+	{ "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
 	{
 		"tpope/vim-fugitive",
 		config = function()
@@ -180,7 +181,6 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		event = "VimEnter",
-		branch = "0.1.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			{
@@ -207,13 +207,13 @@ require("lazy").setup({
 		"ShinKage/idris2-nvim",
 		dependencies = { "MunifTanjim/nui.nvim" },
 	},
+	"hrsh7th/vim-vsnip",
 	"hrsh7th/cmp-nvim-lsp",
 	"hrsh7th/cmp-buffer",
 	"hrsh7th/cmp-path",
 	"hrsh7th/cmp-cmdline",
 	"hrsh7th/nvim-cmp",
 	"onsails/lspkind.nvim",
-	-- 'ggandor/lightspeed.nvim'
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
